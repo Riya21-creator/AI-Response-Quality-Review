@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./App.css";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://ai-response-quality-review.onrender.com";
 
 function App() {
   const [login, setLogin] = useState(false);
