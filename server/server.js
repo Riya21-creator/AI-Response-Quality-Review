@@ -77,17 +77,38 @@ app.get("/tasks", (req, res) => {
 // Submit evaluation
 app.post("/evaluate", async(req, res) => {
     try {
-        const evaluation = new Evaluation(req.body);
-        await evaluation.save();
+        const {
+            prompt,
+            response,
+            accuracy,
+            relevance,
+            coherence,
+            label,
+            comment,
+        } = req.body;
 
-        res.json({
-            message: "Evaluation submitted successfully",
-        });
+        // validation (important)
+        if (!prompt || !response) {
+            return res.status(400).json({ message: "Missing data" });
+        }
+
+        const newEvaluation = {
+            prompt,
+            response,
+            accuracy,
+            relevance,
+            coherence,
+            label,
+            comment,
+        };
+
+        evaluations.push(newEvaluation); // if using array
+        // OR if using Mongo → save to DB
+
+        res.status(201).json({ message: "Saved successfully" });
     } catch (error) {
-        res.status(500).json({
-            message: "Error submitting evaluation",
-            error: error.message,
-        });
+        console.log(error);
+        res.status(500).json({ message: "Server error" });
     }
 });
 
