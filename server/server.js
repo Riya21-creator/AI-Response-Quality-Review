@@ -87,12 +87,15 @@ app.post("/evaluate", async(req, res) => {
             comment,
         } = req.body;
 
-        // validation (important)
+        // debug log (VERY IMPORTANT)
+        console.log("Incoming data:", req.body);
+
+        // validation
         if (!prompt || !response) {
-            return res.status(400).json({ message: "Missing data" });
+            return res.status(400).json({ message: "Missing required fields" });
         }
 
-        const newEvaluation = {
+        const newEvaluation = new Evaluation({
             prompt,
             response,
             accuracy,
@@ -100,18 +103,17 @@ app.post("/evaluate", async(req, res) => {
             coherence,
             label,
             comment,
-        };
+        });
 
-        evaluations.push(newEvaluation); // if using array
-        // OR if using Mongo → save to DB
+        await newEvaluation.save();
 
         res.status(201).json({ message: "Saved successfully" });
+
     } catch (error) {
-        console.log(error);
+        console.log("ERROR:", error); // 🔥 THIS WILL SHOW EXACT ISSUE
         res.status(500).json({ message: "Server error" });
     }
 });
-
 // Get submitted evaluations
 app.get("/evaluations", async(req, res) => {
     try {
